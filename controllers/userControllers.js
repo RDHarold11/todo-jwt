@@ -46,6 +46,8 @@ const loginUser = asyncHandler(async (req, res) => {
       email: user.email,
       token: generateToken(user.id),
     });
+  } else {
+    res.status(400).json({ msg: "Invalid credentials" });
   }
 });
 
