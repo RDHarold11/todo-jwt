@@ -18,6 +18,12 @@ const taskSchema = new Schema(
     category: {
       type: Array,
     },
+    isFavorite: {
+      type: Boolean,
+    },
+    img: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

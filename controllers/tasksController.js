@@ -7,6 +7,11 @@ const getTasks = asyncHandler(async (req, res) => {
   res.status(200).json(tasks);
 });
 
+const getTaskByFavorite = asyncHandler(async (req, res) => {
+  const tasks = await Task.find({ user: req.user.id, isFavorite: true });
+  res.status(200).json(tasks);
+});
+
 const createTaks = asyncHandler(async (req, res) => {
   if (!req.body.title || !req.body.description || !req.body.category) {
     res.status(400).json({ msg: "You must complete the fields" });
@@ -16,6 +21,8 @@ const createTaks = asyncHandler(async (req, res) => {
     title: req.body.title,
     description: req.body.description,
     category: req.body.category,
+    isFavorite: false,
+    img: "",
   });
   res.status(200).json(task);
 });
@@ -33,6 +40,22 @@ const deleteTasks = asyncHandler(async (req, res) => {
   }
   await task.deleteOne();
   res.status(200).json({ id: req.params.id });
+});
+
+const addToFavorite = asyncHandler(async (req, res) => {
+  const task = await Task.findById(req.params.id);
+  if (!task) {
+    res.status(400).json({ msg: `There is no task with id: ${req.params.id}` });
+  }
+  if (!req.user) {
+    res.status(400).json({ msg: `No user` });
+  }
+  if (task.user.toString() !== req.user.id) {
+    res.status(401).json({ msg: "User not authorized" });
+  }
+  task.isFavorite = !task.isFavorite;
+  const result = await task.save();
+  res.status(200).json(result);
 });
 
 const updateTaks = asyncHandler(async (req, res) => {
@@ -54,4 +77,11 @@ const updateTaks = asyncHandler(async (req, res) => {
   res.status(200).json(updatedTask);
 });
 
-module.exports = { getTasks, deleteTasks, updateTaks, createTaks };
+module.exports = {
+  getTasks,
+  deleteTasks,
+  updateTaks,
+  getTaskByFavorite,
+  createTaks,
+  addToFavorite,
+};
