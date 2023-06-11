@@ -11,11 +11,7 @@ const {
 const { protect } = require("../middleware/authMiddleware");
 
 router.route("/").get(protect, getTasks).post(protect, createTaks);
-router.get("/favorites", protect, getTaskByFavorite);
-router
-  .route("/:id")
-  .delete(protect, deleteTasks)
-  .put(protect, updateTaks)
-  .put(protect, addToFavorite);
+router.get("/favorites/:id", protect, addToFavorite);
+router.route("/:id").delete(protect, deleteTasks).put(protect, updateTaks);
 
 module.exports = router;

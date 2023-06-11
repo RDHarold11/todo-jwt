@@ -13,7 +13,7 @@ const getTaskByFavorite = asyncHandler(async (req, res) => {
 });
 
 const createTaks = asyncHandler(async (req, res) => {
-  if (!req.body.title || !req.body.description || !req.body.category) {
+  if (!req.body.title) {
     res.status(400).json({ msg: "You must complete the fields" });
   }
   const task = await Task.create({
@@ -53,6 +53,7 @@ const addToFavorite = asyncHandler(async (req, res) => {
   if (task.user.toString() !== req.user.id) {
     res.status(401).json({ msg: "User not authorized" });
   }
+  /* console.log(task.user, req.user.id); */
   task.isFavorite = !task.isFavorite;
   const result = await task.save();
   res.status(200).json(result);
